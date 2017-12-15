@@ -50,12 +50,14 @@ public class Selectron
     double DOWN_SPEED = 0.8;
 
 
-    double LEFT_CENTER = 0.52; //tweak this
-    double RIGHT_CENTER = 0.38; //tweak this
-    double LEFT_IN = 1.0; //tweak this
+    double LEFT_CENTER = 0.56; //tweak this
+    double RIGHT_CENTER = 0.35; //tweak this
+    double LEFT_SLIGHT_OUT = 0.47;
+    double RIGHT_SLIGHT_OUT = 0.48;
+    double LEFT_IN = 0.99; //tweak this
     double RIGHT_IN = 0.0; //tweak this
-    double LEFT_OUT = 0.32; //tweak this
-    double RIGHT_OUT = 0.6; //tweak this //done
+    double LEFT_OUT = 0.34; //tweak this
+    double RIGHT_OUT = 0.53; //tweak this //done
     //--2-end
 
     int JEWEL_OUT = -580; //tweak this
@@ -107,7 +109,7 @@ public class Selectron
         moreMotors[2] = wheelL2;
         moreMotors[3] = wheelR2;
         for (DcMotor motor: moreMotors){
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         jewelDisplacer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -117,7 +119,12 @@ public class Selectron
         rightServo.setPosition(RIGHT_CENTER);
     }
 
-    /* Initialize standard Hardware interfaces */
+
+    public void setEncoders(DcMotor.RunMode mode){
+        for (DcMotor motor:moreMotors){
+            motor.setMode(mode);
+        }
+    }
 
 
     public void displaceJewel(double color_threshold, int count, boolean redAlliance) {

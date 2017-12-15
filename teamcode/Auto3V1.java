@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -51,6 +52,7 @@ public class Auto3V1 extends LinearOpMode {
     @Override
     public void runOpMode() {
         bot = new Selectron(this);
+        bot.setEncoders(DcMotor.RunMode.RUN_TO_POSITION);
         r = new ElapsedTime();
 
         waitForStart();

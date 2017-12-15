@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
@@ -43,7 +44,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Selectron test", group="test")
+@Autonomous(name="3V1 jewel only -Red", group="test")
 public class Auto3V5JewelOnlyRed extends LinearOpMode {
     Selectron bot = null;
     boolean RED_ALLIANCE = true;
@@ -51,6 +52,7 @@ public class Auto3V5JewelOnlyRed extends LinearOpMode {
     @Override
     public void runOpMode() {
         bot = new Selectron(this);
+        bot.setEncoders(DcMotor.RunMode.RUN_TO_POSITION);
 
         waitForStart();
 

@@ -45,7 +45,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  * CumOp4: adds lift functionality
  */
 
-@TeleOp(name="CumOp5V2-4WD-2Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="2V5 -2 Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
 //@Disabled
 public class TeleOp2V5V2Players extends LinearOpMode
 {
@@ -64,18 +64,18 @@ public class TeleOp2V5V2Players extends LinearOpMode
 
             float direction;
             if (gamepad1.left_stick_x >= 0.1 || gamepad1.left_stick_x <= -0.1) {
-                direction = -gamepad1.left_stick_x;
+                direction = gamepad1.left_stick_x;
             } else if (gamepad1.right_stick_x >= 0.1 || gamepad1.right_stick_x <= -0.1) {
-                direction = 0.2F * -gamepad1.right_stick_x;
+                direction = 0.2F * gamepad1.right_stick_x;
             } else {
                 direction = 0;
             }
             //--1-begin
             float throttle;
             if (gamepad1.left_stick_y >= 0.1 || gamepad1.left_stick_y <= -0.1){
-                throttle = gamepad1.left_stick_y;
+                throttle = -gamepad1.left_stick_y;
             } else if ( gamepad1.right_stick_y >= 0.1 || gamepad1.right_stick_y <= 0.1){
-                throttle = 0.2F * gamepad1.right_stick_y;
+                throttle = 0.2F * -gamepad1.right_stick_y;
             } else {
                 throttle = 0;
             }
@@ -96,9 +96,12 @@ public class TeleOp2V5V2Players extends LinearOpMode
             } else if (gamepad2.b) { //release
                 bot.leftServo.setPosition(bot.LEFT_OUT);
                 bot.rightServo.setPosition(bot.RIGHT_OUT);
-            } else if (gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down){
+            } else if (gamepad2.dpad_right){
                 bot.leftServo.setPosition(bot.LEFT_IN);
                 bot.rightServo.setPosition(bot.RIGHT_IN);
+            } else if (gamepad2.dpad_left){
+                bot.leftServo.setPosition(bot.LEFT_SLIGHT_OUT);
+                bot.rightServo.setPosition(bot.RIGHT_SLIGHT_OUT);
             }
             //--3-end
 
