@@ -11,7 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * This is NOT an opmode.
@@ -66,6 +71,15 @@ public class Selectron
     double COLOR_THRESHOLD = 0.71;
 
 
+
+    VuforiaLocalizer vuforia;
+    RelicRecoveryVuMark vuMark = null;
+    VuforiaTrackables relicTrackables;
+    VuforiaTrackable relicTemplate;
+
+
+
+
     /* local OpMode members. */
     LinearOpMode op = null;
 
@@ -117,6 +131,36 @@ public class Selectron
 
         leftServo.setPosition(LEFT_CENTER);
         rightServo.setPosition(RIGHT_CENTER);
+    }
+
+
+    public void initVuforia(){
+        int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        // OR...  Do Not Activate the Camera Monitor View, to save power
+        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey =
+                "Aczwc7j/////AAAAGSh6oYrgWE/wvIHsaTUy6ppNpIawgvZu5xiQAUK+xtcW8Zw8P9GhxqBOsB2RKBAP6cOUkwCiyhCaYHKfrhA7ORLNRka9TTTm36bBHMY/WhR02K5Z5Qa2TaqRNjtpZ5rZ2Q8Ee+vnuiVasqj3uAMCB0ceFPYemYJ8snub+w/8gKVwy09n+ZWJ/5yymbJ9lGIQAwlc8Wo0HogRSK6Yk0Z0CiX/UFKhB+wK+I7Vzcwv0pZVOXAhf7fuDJOUr+TcuCBptm6AlFai2evVFuKT1seKaTsX+Sa2jvP3F0O1gbfLYK1dWjIh5/mqEp6yWgk2D+fAhGGWVjeUkN0ftstV6F1U06+f9P52sOd6w0Fuagpm27TP";
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+    }
+
+    public void findPicture(){
+        relicTrackables.activate();
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        ElapsedTime runtime = new ElapsedTime();
+        while (op.opModeIsActive() && (vuMark == RelicRecoveryVuMark.UNKNOWN) && runtime.seconds() <= 7){
+            vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            op.telemetry.addData("VuMark, ", "%s visible", vuMark);
+            op.telemetry.update();
+        }
     }
 
 
@@ -267,7 +311,8 @@ public class Selectron
     }
 
     public void encoderPowerTurn(double degrees, double power){
-        // goes counterclockwise
+        // degrees positive goes counterclockwise
+        // degrees negative goes clockwise
 
         // wheel circumference = 4.0 * pi
         // encoder counts is 1120 per revolution
@@ -304,6 +349,29 @@ public class Selectron
     }
 
     public void timePowerDrive(double milliseconds, boolean forwards, double power, ElapsedTime r){
+        for (DcMotor motor : someMotors){
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        for (DcMotor motor : someMotors){
+            if (forwards){
+                motor.setPower(power);
+            } else {
+                motor.setPower(-power);
+            }
+        }
+        s(milliseconds, r);
+        for (DcMotor motor : someMotors){
+            motor.setPower(0);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        s(250, r);
+    }
+
+    public void timeDrive(double milliseconds, boolean forwards, ElapsedTime r){
+        timePowerDrive(milliseconds, forwards, 0.25, r);
+    }
+
+    public void timePower4WDrive(double milliseconds, boolean forwards, double power, ElapsedTime r){
         for (DcMotor motor : moreMotors){
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -321,18 +389,150 @@ public class Selectron
         }
         s(250, r);
     }
-
-    public void timeDrive(double milliseconds, boolean forwards, ElapsedTime r){
-        timePowerDrive(milliseconds, forwards, 0.25, r);
+    public void time4WDrive(double milliseconds, boolean forwards, ElapsedTime r){
+        timePower4WDrive(milliseconds, forwards, 0.25, r);
     }
 
-    public void square_up(ElapsedTime r){
-        timeDrive(1000, true, r);
-        timePowerDrive(1000, false, 0.1, r);
+    public void square_up(ElapsedTime r, boolean redAlliance){
 
-        for (DcMotor motor : moreMotors){
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (redAlliance){
+            time4WDrive(1000, true, r);
+            timePowerDrive(1200, false, 0.15, r);
+        } else {
+            time4WDrive(1000, false, r);
+            timePowerDrive(1200, true, 0.15, r);
         }
+        s(250, r);
+    }
+
+
+    // None of the methods from here on have been extensively tested. Use at your own peril.
+
+    public void newAndImprovedEncoderDrive(double inches, double power, int stuckCount){
+        ElapsedTime r = new ElapsedTime();
+        double COUNTS_PER_INCH = (280/3.1416); // actually 3.141592653589793238462643383279502... but whatever
+        double COMPENSATION_FACTOR = 1.0;
+        int counts = (int) (COUNTS_PER_INCH * inches * COMPENSATION_FACTOR);
+        int curPosL = wheelL.getCurrentPosition();
+        int curPosR = wheelR.getCurrentPosition();
+
+        if (op.opModeIsActive()) {
+            for (DcMotor motor : someMotors) {
+                motor.setTargetPosition(motor.getCurrentPosition() + counts);
+            }
+            for (DcMotor motor : someMotors) {
+                motor.setPower(0.25);
+            }
+
+            int stuckCode = 0;
+            boolean stuck = false;
+            while (op.opModeIsActive() && !stuck && (wheelL.isBusy() || wheelR.isBusy())) {
+                stuckCode = isStuck(stuckCode);
+                if (stuckCode > 2){
+                    stuck = true;
+                }
+                if (stuck){
+                    op.telemetry.addLine("STUCK!!!!");
+                } else {
+                    op.telemetry.addData("Target position: ", inches);
+                    op.telemetry.addData("Encoder Left 1 position: ", wheelL.getCurrentPosition());
+                    op.telemetry.addData("Encoder Right 1 position: ", wheelR.getCurrentPosition());
+                    op.telemetry.update();
+                }
+                op.telemetry.update();
+            }
+            for (DcMotor motor : someMotors) {
+                motor.setPower(0);
+            }
+            if (stuck){
+                op.telemetry.addData("Stuck count: ", stuckCount+1);
+                op.telemetry.update();
+                wheelL.setTargetPosition(wheelR.getCurrentPosition() - curPosR + curPosL);
+                wheelL.setPower(0.25);
+                while(wheelL.isBusy()){}
+                wheelL.setPower(0);
+                s(250, r);
+                int currentError = curPosL + counts - wheelL.getCurrentPosition();
+                newAndImprovedEncoderDrive(currentError/COUNTS_PER_INCH, 0.25, stuckCount+1);
+            } else {
+                op.telemetry.addData("Stuck count: ", stuckCount);
+                op.telemetry.update();
+            }
+            s(250, r);
+        }
+    }
+
+    public void newAndImprovedEncoderTurn(double degrees, double power, int stuckCount){
+        ElapsedTime r = new ElapsedTime();
+        double COUNTS_PER_DEGREE = (385.0/36.0);
+        double COMPENSATION_FACTOR = 17.0/16.0;
+        int counts = (int) (COUNTS_PER_DEGREE * degrees * COMPENSATION_FACTOR);
+        int curPosL = wheelL.getCurrentPosition();
+        int curPosR = wheelR.getCurrentPosition();
+
+        if (op.opModeIsActive()) {
+            wheelL.setTargetPosition(wheelL.getCurrentPosition() - counts);
+            wheelR.setTargetPosition(wheelR.getCurrentPosition() + counts);
+            for (DcMotor motor : someMotors) {
+                motor.setPower(0.25);
+            }
+
+            int stuckCode = 0;
+            boolean stuck = false;
+            while (op.opModeIsActive() && !stuck && (wheelL.isBusy() || wheelR.isBusy())) {
+                stuckCode = isStuck(stuckCode);
+                if (stuckCode > 2){
+                    stuck = true;
+                }
+                if (stuck){
+                    op.telemetry.addLine("STUCK!!!!");
+                } else {
+                    op.telemetry.addData("Target position: ", degrees);
+                    op.telemetry.addData("Encoder Left 1 position: ", wheelL.getCurrentPosition());
+                    op.telemetry.addData("Encoder Right 1 position: ", wheelR.getCurrentPosition());
+                    op.telemetry.update();
+                }
+                op.telemetry.update();
+            }
+            for (DcMotor motor : someMotors) {
+                motor.setPower(0);
+            }
+            if (stuck){
+                op.telemetry.addData("Stuck count: ", stuckCount+1);
+                op.telemetry.update();
+                wheelL.setTargetPosition(wheelR.getCurrentPosition() - curPosR + curPosL);
+                wheelL.setPower(0.25);
+                while(wheelL.isBusy()){}
+                wheelL.setPower(0);
+                s(250, r);
+                int currentError = curPosL + counts - wheelL.getCurrentPosition();
+                newAndImprovedEncoderTurn(currentError/COUNTS_PER_DEGREE, 0.25, stuckCount+1);
+            } else {
+                op.telemetry.addData("Stuck count: ", stuckCount);
+                op.telemetry.update();
+            }
+            s(250, r);
+        }
+    }
+
+    public int isStuck(int prevCode){
+        //NOTE: MODIFY TO TEST WHEELS SEPARATELY SO IF ONE WHEEL IS ON TARGET AND THE OTHER IS NOT IT WON'T SAY IT IS STUCK
+        int newCode;
+        if (Math.abs(wheelL.getCurrentPosition()-wheelL.getTargetPosition())>30 || Math.abs(wheelR.getCurrentPosition()-wheelR.getTargetPosition())>30) {
+            int curPosL = wheelL.getCurrentPosition();
+            int curPosR = wheelR.getCurrentPosition();
+            ElapsedTime r = new ElapsedTime();
+            while (op.opModeIsActive() && r.milliseconds() < 100) {
+            }
+            if ((Math.abs(wheelL.getCurrentPosition() - curPosL) < 10) || (Math.abs(wheelR.getCurrentPosition() - curPosR) < 10)) {
+                newCode = prevCode + 1;
+            } else {
+                newCode = 0;
+            }
+        } else {
+            newCode = 0;
+        }
+        return newCode;
     }
  }
 

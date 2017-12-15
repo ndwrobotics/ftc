@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="3V1 Safe zone", group="test")
-public class Auto3V1 extends LinearOpMode {
+@Autonomous(name="New Encoder Test", group="test")
+public class NewEncoderTest extends LinearOpMode {
     Selectron bot = null;
     ElapsedTime r = null;
     @Override
@@ -17,10 +17,11 @@ public class Auto3V1 extends LinearOpMode {
         r = new ElapsedTime();
 
         waitForStart();
-
-        bot.lift.setPower(-bot.DOWN_SPEED);
-        bot.s(800, r);
-        bot.lift.setPower(0);
-        bot.encoder4WDrive(36);
+        while(opModeIsActive()){
+            bot.newAndImprovedEncoderDrive(24, 0.25, 0);
+            bot.newAndImprovedEncoderTurn(90, 0.25, 0);
+            bot.newAndImprovedEncoderTurn(-90, 0.25, 0);
+            bot.newAndImprovedEncoderDrive(-24, 0.25, 0);
+        }
     }
 }
