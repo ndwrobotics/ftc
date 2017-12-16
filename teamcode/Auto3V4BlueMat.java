@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
-@Autonomous(name="3V3 Vuforia -Blue Mat", group="Autonomous")
+@Autonomous(name="3V4 Jewel -Blue Mat", group="Autonomous")
 //@Disabled
-public class Auto3V3BlueMat extends LinearOpMode
+public class Auto3V4BlueMat extends LinearOpMode
 {
 
 
@@ -27,6 +27,10 @@ public class Auto3V3BlueMat extends LinearOpMode
         waitForStart();
         ElapsedTime r = new ElapsedTime();
 
+        bot.resetJewelArm();
+        bot.jewelDisplacer.setTargetPosition(bot.JEWEL_OUT);
+        bot.jewelDisplacer.setPower(0.25);
+
         bot.findPicture();
 
         if(opModeIsActive()){
@@ -35,6 +39,11 @@ public class Auto3V3BlueMat extends LinearOpMode
 
         bot.s(800, r);
         bot.lift.setPower(0);
+
+        bot.displaceJewel(bot.COLOR_THRESHOLD, RED_ALLIANCE);
+
+
+
 
         bot.square_up(r, RED_ALLIANCE);
 

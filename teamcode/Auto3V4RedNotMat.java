@@ -1,22 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Jewel only -Blue", group="test")
-@Disabled
-public class Auto3V5JewelOnlyBlue extends LinearOpMode {
+@Autonomous(name="3V4 -Red Not Mat", group="Autonomous")
+public class Auto3V4RedNotMat extends LinearOpMode {
     Selectron bot = null;
-    boolean RED_ALLIANCE = false;
+    boolean RED_ALLIANCE = true;
 
     @Override
     public void runOpMode() {
         bot = new Selectron(this);
         bot.setEncoders(DcMotor.RunMode.RUN_TO_POSITION);
         bot.resetJewelArm();
+        ElapsedTime r = new ElapsedTime();
 
         waitForStart();
 
@@ -28,6 +28,9 @@ public class Auto3V5JewelOnlyBlue extends LinearOpMode {
 
         bot.jewelDisplacer.setTargetPosition(bot.JEWEL_IN);
         while(bot.jewelDisplacer.isBusy() && opModeIsActive()){}
+
+        bot.square_up(r, RED_ALLIANCE);
+        bot.encoderDrive(20);
 
     }
 }

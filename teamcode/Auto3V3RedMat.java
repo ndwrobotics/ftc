@@ -5,14 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="3V2 Glyph -Blue Mat", group="Autonomous")
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+
+@Autonomous(name="3V3 Vuforia -Red Mat", group="Autonomous")
 //@Disabled
-public class Auto3V2BlueMat extends LinearOpMode
+public class Auto3V3RedMat extends LinearOpMode
 {
 
 
     Selectron bot = null;
-    boolean RED_ALLIANCE = false;
+    boolean RED_ALLIANCE = true;
 
     @Override
     public void runOpMode() {
@@ -20,9 +22,12 @@ public class Auto3V2BlueMat extends LinearOpMode
         bot = new Selectron(this);
         bot.setEncoders(DcMotor.RunMode.RUN_TO_POSITION);
         bot.resetJewelArm();
+        bot.initVuforia();
 
         waitForStart();
         ElapsedTime r = new ElapsedTime();
+
+        bot.findPicture();
 
         if(opModeIsActive()){
             bot.lift.setPower(-bot.DOWN_SPEED);
@@ -33,10 +38,14 @@ public class Auto3V2BlueMat extends LinearOpMode
 
         bot.square_up(r, RED_ALLIANCE);
 
-        bot.encoderDrive(-17.5);
-
-
-        bot.placeGlyphEtc(RED_ALLIANCE);
-
+        if(bot.vuMark == RelicRecoveryVuMark.LEFT){
+            bot.encoderDrive(18);
+        } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
+            bot.encoderDrive(3);
+        } else {
+            bot.encoderDrive(10.5);
+        }
+        //3 or 10.5 or 18
+        bot.placeGlyphVuforiaEtc(RED_ALLIANCE);
     }
 }
