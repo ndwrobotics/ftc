@@ -67,7 +67,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 @Autonomous(name="VuMark Id-Back Cam", group ="Concept")
 //@Disabled
-public class VuMarkIdentificationBackCam extends LinearOpMode {
+public class  VuMarkIdentificationBackCam extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
 

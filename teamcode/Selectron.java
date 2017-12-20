@@ -65,7 +65,7 @@ public class Selectron
     double RIGHT_OUT = 0.53; //tweak this //done
     //--2-end
 
-    int JEWEL_OUT = -590; //tweak this
+    int JEWEL_OUT = -600; //tweak this
     int JEWEL_IN = 0; //tweak this //done
 
     double COLOR_THRESHOLD = 0.71;
@@ -212,35 +212,43 @@ public class Selectron
 
             if (op.opModeIsActive()){
                 if (red > 10 * color_threshold) {
-                    if (redAlliance){
-                        encoderPowerTurn(30, power);
-                        encoderPowerTurn(-30, power);
-                    } else {
-                        encoderPowerTurn(-30, power);
-                        encoderPowerTurn(30, power);
-                    }
-                } else if (blue > 10 * color_threshold) {
-                    if(redAlliance){
-                        encoderPowerTurn(-30, power);
-                        encoderPowerTurn(30, power);
-                    } else {
-                        encoderPowerTurn(30, power);
-                        encoderPowerTurn(-30, power);
-                    }
+                    if (blue > 10 * color_threshold) {
+                        jewelDisplacer.setTargetPosition(JEWEL_OUT-5);
 
-                } else {
-                    if (count == 0){
-                        encoderPowerDrive(0.5, 0.15);
-                    } else if (count == 1){
-                        encoderPowerDrive(0.3, 0.15);
-                    } else if (count == 2){
-                        encoderPowerDrive(-1.3, 0.15);
-                    } else if (count == 3){
-                        encoderPowerDrive(-0.5, 0.15);
-                    } else if (count == 4){
-                        encoderPowerDrive(-0.5, 0.15);
+
+                    } else {
+                        if (redAlliance) {
+                            encoderPowerTurn(30, power);
+                            encoderPowerTurn(-30, power);
+                        } else {
+                            encoderPowerTurn(-30, power);
+                            encoderPowerTurn(30, power);
+                        }
                     }
-                    displaceJewel(color_threshold, count + 1, redAlliance);
+                } else {
+                    if (blue > 10 * color_threshold){
+                        if(redAlliance){
+                            encoderPowerTurn(-30, power);
+                            encoderPowerTurn(30, power);
+                        } else {
+                            encoderPowerTurn(30, power);
+                            encoderPowerTurn(-30, power);
+                        }
+
+                    } else {
+                        if (count == 0){
+                            encoderPowerDrive(0.5, 0.15);
+                        } else if (count == 1){
+                            encoderPowerDrive(0.3, 0.15);
+                        } else if (count == 2){
+                            encoderPowerDrive(-1.3, 0.15);
+                        } else if (count == 3){
+                            encoderPowerDrive(-0.5, 0.15);
+                        } else if (count == 4){
+                            encoderPowerDrive(-0.5, 0.15);
+                        }
+                        displaceJewel(color_threshold, count + 1, redAlliance);
+                    }
                 }
             }
         }
@@ -435,7 +443,7 @@ public class Selectron
         encoderDrive(4); // 0 or 4 or 8?
     }
 
-    public void placeGlyphVuforiaEtc(boolean red_alliance){
+    public void partPlaceGlyphVuforiaEtc(boolean red_alliance){
         ElapsedTime r = new ElapsedTime();
 
         encoderTurn(-60);
@@ -457,6 +465,10 @@ public class Selectron
         encoderDrive(10);
         timeDrive(400, true, r);
         encoderDrive(-10);
+
+    }
+    public void placeGlyphVuforiaEtc(boolean red_alliance){
+        partPlaceGlyphVuforiaEtc(red_alliance);
         encoderTurn(60);
         if(vuMark == RelicRecoveryVuMark.LEFT){
             encoderDrive(0);
@@ -465,6 +477,19 @@ public class Selectron
         } else {
             encoderDrive(4);
         }
+    }
+
+    public void specialPlaceGlyphVuforiaEtc(boolean red_alliance){
+        partPlaceGlyphVuforiaEtc(red_alliance);
+        encoderTurn(-60);
+        if(vuMark == RelicRecoveryVuMark.LEFT){
+            encoderDrive(8);
+        } else if (vuMark == RelicRecoveryVuMark.RIGHT){
+            encoderDrive(0);
+        } else {
+            encoderDrive(4);
+        }
+
     }
 
     public void square_up(ElapsedTime r, boolean redAlliance){

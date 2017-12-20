@@ -30,7 +30,9 @@ public class Auto3V4RedNotMat extends LinearOpMode {
         while(bot.jewelDisplacer.isBusy() && opModeIsActive()){}
 
         bot.square_up(r, RED_ALLIANCE);
-        bot.encoderDrive(20);
+        bot.encoderDrive(12);
+        bot.encoderTurn(45);
+        bot.encoderDrive(8);
 
     }
 }

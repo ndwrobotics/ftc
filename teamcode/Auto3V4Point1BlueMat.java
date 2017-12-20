@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
-@Autonomous(name="3V4 Jewel -Blue Mat", group="Autonomous")
-@Disabled
-public class Auto3V4BlueMat extends LinearOpMode
+@Autonomous(name="3V4.1 Jewel -Blue Mat", group="Autonomous")
+//@Disabled
+public class Auto3V4Point1BlueMat extends LinearOpMode
 {
 
 
@@ -50,13 +49,18 @@ public class Auto3V4BlueMat extends LinearOpMode
 
         if(bot.vuMark == RelicRecoveryVuMark.LEFT){
             bot.encoderDrive(-17.5);
+            bot.placeGlyphVuforiaEtc(RED_ALLIANCE);
+
         } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
-            bot.encoderDrive(-32.5);
+            bot.encoderDrive(-19);
+            bot.encoderTurn(-45);
+            bot.specialPlaceGlyphVuforiaEtc(RED_ALLIANCE);
+
         } else {
             bot.encoderDrive(-25);
-        }
+            bot.placeGlyphVuforiaEtc(RED_ALLIANCE);
 
-        bot.placeGlyphVuforiaEtc(RED_ALLIANCE);
+        }
 
     }
 }
