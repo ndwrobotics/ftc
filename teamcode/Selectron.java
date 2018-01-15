@@ -55,8 +55,8 @@ public class Selectron
     double DOWN_SPEED = 0.8;
 
 
-    double LEFT_CENTER = 0.56; //tweak this
-    double RIGHT_CENTER = 0.35; //tweak this
+    double LEFT_CENTER = 0.59; //tweak this
+    double RIGHT_CENTER = 0.32; //tweak this
     double LEFT_SLIGHT_OUT = 0.47;
     double RIGHT_SLIGHT_OUT = 0.48;
     double LEFT_IN = 0.99; //tweak this
