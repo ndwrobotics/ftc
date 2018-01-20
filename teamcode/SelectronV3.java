@@ -48,18 +48,18 @@ public class SelectronV3
     DcMotor someMotors[] = null;
     DcMotor moreMotors[] = null;
 
-    double UP_SPEED = -0.5; //tweak this
+    double UP_SPEED = -0.7; //tweak this
     double DOWN_SPEED = 0.8;
 
 
     double LEFT_CENTER = 0.59; //tweak this
-    double RIGHT_CENTER = 0.32; //tweak this
+    double RIGHT_CENTER = 0.3; //tweak this
     double LEFT_SLIGHT_OUT = 0.47;
-    double RIGHT_SLIGHT_OUT = 0.48;
+    double RIGHT_SLIGHT_OUT = 0.46;
     double LEFT_IN = 0.99; //tweak this
     double RIGHT_IN = 0.0; //tweak this
     double LEFT_OUT = 0.34; //tweak this
-    double RIGHT_OUT = 0.53; //tweak this //done
+    double RIGHT_OUT = 0.51; //tweak this //done
     //--2-end
 
     int JEWEL_OUT = -620; //tweak this
