@@ -10,11 +10,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="New Encoder Test", group="test")
 @Disabled
 public class NewEncoderTest extends LinearOpMode {
-    Selectron bot = null;
+    SelectronV2 bot = null;
     ElapsedTime r = null;
     @Override
     public void runOpMode() {
-        bot = new Selectron(this);
+        bot = new SelectronV2(this);
         bot.setEncoders(DcMotor.RunMode.RUN_TO_POSITION);
         r = new ElapsedTime();
 

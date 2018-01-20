@@ -62,7 +62,7 @@ public class SelectronV2
     double RIGHT_OUT = 0.53; //tweak this //done
     //--2-end
 
-    int JEWEL_OUT = -580; //tweak this
+    int JEWEL_OUT = -620; //tweak this
     int JEWEL_IN = 0; //tweak this //done
 
     double COLOR_THRESHOLD = 0.71;
@@ -544,7 +544,7 @@ public class SelectronV2
     }
 
 
-    /*public void newAndImprovedEncoderDrive(double inches, double power, int stuckCount){
+    public void newAndImprovedEncoderDrive(double inches, double power, int stuckCount){
         ElapsedTime r = new ElapsedTime();
         double COUNTS_PER_INCH = (280/3.1416); // actually 3.141592653589793238462643383279502... but whatever
         double COMPENSATION_FACTOR = 1.0;
@@ -683,7 +683,7 @@ public class SelectronV2
         } else {
             return false;
         }
-    }*/
+    }
  }
 
 

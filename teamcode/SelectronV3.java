@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,7 +10,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -26,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * In that case, this is our (10925 Spartacles') robot.
  * (Affectionately dubbed Selectron.)
  */
-public class Selectron
+public class SelectronV3
 {
     /* Public OpMode members. */
     //--1-begin
@@ -86,7 +83,7 @@ public class Selectron
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public Selectron(LinearOpMode opMode){
+    public SelectronV3(LinearOpMode opMode){
         op = opMode;
 
         colorSensor = op.hardwareMap.get(NormalizedColorSensor.class, "color");
@@ -215,7 +212,6 @@ public class Selectron
                     if (blue > 10 * color_threshold) {
                         jewelDisplacer.setTargetPosition(JEWEL_OUT-5);
 
-
                     } else {
                         if (redAlliance) {
                             encoderPowerTurn(30, power);
@@ -241,7 +237,8 @@ public class Selectron
                         } else if (count == 1){
                             encoderPowerDrive(0.3, 0.15);
                         } else if (count == 2){
-                            encoderPowerDrive(-1.3, 0.15);
+                            encoderPowerDrive(-1.2, 0.15);
+                            s(250, r);
                         } else if (count == 3){
                             encoderPowerDrive(-0.5, 0.15);
                         } else if (count == 4){
@@ -266,32 +263,7 @@ public class Selectron
     }
 
     public void encoderPowerDrive(double inches, double power){
-
-        // wheel circumference = 4.0 * pi
-        // encoder counts is 1120 per revolution
-        // 1120 counts per 4pi inches, so 1120/4pi counts per inch
-        double COUNTS_PER_INCH = (280/3.1416); // actually 3.141592653589793238462643383279502... but whatever
-        double COMPENSATION_FACTOR = 1.0;
-        int counts = (int) (COUNTS_PER_INCH * inches * COMPENSATION_FACTOR);
-        if (op.opModeIsActive()) {
-            for (DcMotor motor : someMotors){
-                motor.setTargetPosition(motor.getCurrentPosition() + counts);
-            }
-            for (DcMotor motor : someMotors){
-                motor.setPower(power);
-            }
-            while (op.opModeIsActive() && (wheelL.isBusy() || wheelR.isBusy())){
-                op.telemetry.addData("Target position: ", inches);
-                op.telemetry.addData("Encoder Left 1 position: ", wheelL.getCurrentPosition());
-                op.telemetry.addData("Encoder Right 1 position: ", wheelR.getCurrentPosition());
-                op.telemetry.update();
-            }
-            for (DcMotor motor : someMotors){
-                motor.setPower(0);
-            }
-            s(250, new ElapsedTime());
-
-        }
+        newEncoderInchesPowerDrive(inches, power, getInchesTimeout(inches));
     }
 
     public void encoderDrive(double inches){
@@ -330,37 +302,7 @@ public class Selectron
     }
 
     public void encoderPowerTurn(double degrees, double power){
-        // degrees positive goes counterclockwise
-        // degrees negative goes clockwise
-
-        // wheel circumference = 4.0 * pi
-        // encoder counts is 1120 per revolution
-        // 1120 counts per 4pi inches, so 280/pi counts per inch
-        // turn diameter is 13.75 inches, so a 360 degree turn is 13.75pi inches
-        // so one degree is 13.75pi/360 = 55pi/1440 = 11pi/288
-        // 280/pi counts per inch times 11pi/288 inches per degree is 11*280/288 counts per degree
-        // 11*280/288 = 11*35/36 = 385/36
-        double COUNTS_PER_DEGREE = (385.0/36.0);
-        double COMPENSATION_FACTOR = 17.0/16.0;
-        int counts = (int) (COUNTS_PER_DEGREE * degrees * COMPENSATION_FACTOR);
-        if (op.opModeIsActive()) {
-            wheelL.setTargetPosition(wheelL.getCurrentPosition() - counts);
-            wheelR.setTargetPosition(wheelR.getCurrentPosition() + counts);
-            // should go counterclockwise
-            for (DcMotor motor : someMotors){
-                motor.setPower(power);
-            }
-            while (op.opModeIsActive() && (wheelL.isBusy() || wheelR.isBusy())){
-                op.telemetry.addData("Target position: ", counts);
-                op.telemetry.addData("Encoder Left 1 position: ", wheelL.getCurrentPosition());
-                op.telemetry.addData("Encoder Right 1 position: ", wheelR.getCurrentPosition());
-                op.telemetry.update();
-            }
-            for (DcMotor motor : someMotors){
-                motor.setPower(0);
-            }
-            s(250, new ElapsedTime());
-        }
+        newEncoderDegreesPowerTurn(degrees, power, getDegreesTimeout(degrees));
     }
 
     public void encoderTurn(double degrees){
@@ -450,12 +392,8 @@ public class Selectron
         encoderDrive(12);
         timeDrive(400, true, r);
 
+        autoLowerLift();
 
-        if (op.opModeIsActive()){
-            lift.setPower(DOWN_SPEED);
-        }
-        s(800, r);
-        lift.setPower(0);
         leftServo.setPosition(LEFT_SLIGHT_OUT);
         rightServo.setPosition(RIGHT_SLIGHT_OUT);
         s(250, r);
@@ -496,13 +434,15 @@ public class Selectron
 
         if (redAlliance){
             time4WDrive(1200, true, r);
-            timePowerDrive(1200, false, 0.2, r);
+            timePowerDrive(1000, false, 0.3, r);
         } else {
             time4WDrive(1200, false, r);
-            timePowerDrive(1200, true, 0.2, r);
+            timePowerDrive(1000, true, 0.3, r);
         }
         s(250, r);
     }
+
+
     public void newEncoderInchesPowerDrive(double inches, double power, double timeout){
         double COUNTS_PER_INCH = (280/3.1416); // actually 3.141592653589793238462643383279502... but whatever
         double COMPENSATION_FACTOR = 1.0;
@@ -640,13 +580,43 @@ public class Selectron
         int counts = (int) (COUNTS_PER_DEGREE * degrees * COMPENSATION_FACTOR);
         return getCountsTimeout(counts);
     }
- }
 
 
 
 
+    public void autoRaiseLift(){
+        if(op.opModeIsActive()){
+            lift.setPower(-DOWN_SPEED);
+        }
+
+        s(800, new ElapsedTime());
+        lift.setPower(0);
+    }
+    public void autoLowerLift(){
+        if(op.opModeIsActive()){
+            lift.setPower(DOWN_SPEED);
+        }
+
+        s(800, new ElapsedTime());
+        lift.setPower(0);
+    }
 
 
-
-
-
+    public void release(){
+        leftServo.setPosition(LEFT_OUT);
+        rightServo.setPosition(RIGHT_OUT);
+    }
+    public void grab(){
+        leftServo.setPosition(LEFT_CENTER);
+        rightServo.setPosition(RIGHT_CENTER);
+    }
+    public void slight_release(){
+        leftServo.setPosition(LEFT_SLIGHT_OUT);
+        rightServo.setPosition(RIGHT_SLIGHT_OUT);
+    }
+    public void completely_close(){
+        leftServo.setPosition(LEFT_IN);
+        rightServo.setPosition(RIGHT_IN);
+    }
+}
+//
