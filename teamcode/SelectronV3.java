@@ -59,10 +59,10 @@ public class SelectronV3
     double LEFT_IN = 0.99; //tweak this
     double RIGHT_IN = 0.0; //tweak this
     double LEFT_OUT = 0.34; //tweak this
-    double RIGHT_OUT = 0.51; //tweak this //done
+    double RIGHT_OUT = 0.53; //tweak this //done
     //--2-end
 
-    int JEWEL_OUT = -620; //tweak this
+    int JEWEL_OUT = -615; //tweak this
     int JEWEL_IN = 0; //tweak this //done
 
     double COLOR_THRESHOLD = 0.71;
@@ -237,8 +237,8 @@ public class SelectronV3
                         } else if (count == 1){
                             encoderPowerDrive(0.3, 0.15);
                         } else if (count == 2){
-                            encoderPowerDrive(-1.2, 0.15);
-                            s(250, r);
+                            encoderPowerDrive(-1.1, 0.15);
+                            s(500, r);
                         } else if (count == 3){
                             encoderPowerDrive(-0.5, 0.15);
                         } else if (count == 4){

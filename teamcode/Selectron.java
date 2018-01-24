@@ -65,7 +65,7 @@ public class Selectron
     double RIGHT_OUT = 0.51; //tweak this //done
     //--2-end
 
-    int JEWEL_OUT = -620; //tweak this
+    int JEWEL_OUT = -615; //tweak this
     int JEWEL_IN = 0; //tweak this //done
 
     double COLOR_THRESHOLD = 0.71;

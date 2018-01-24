@@ -45,25 +45,25 @@ public class Auto4V4BlueNotMat extends LinearOpMode {
             bot.encoderDrive(24);
         } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
             bot.encoderDrive(-5);
-            bot.encoderTurn(135);
-            bot.encoderDrive(6);
+            bot.encoderTurn(127);
+            bot.encoderDrive(16);
 
         } else {
             bot.encoderDrive(-5);
-            bot.encoderTurn(145);
-            bot.encoderDrive(8);
+            bot.encoderTurn(142);
+            bot.encoderDrive(7);
         }
         bot.timeDrive(600, true, r);
         bot.release();
         bot.s(250, r);
-        bot.encoderDrive(-8);
+        bot.encoderDrive(-10);
         bot.autoLowerLift();
         bot.completely_close();
-        bot.encoderDrive(8);
+        bot.encoderDrive(10);
         bot.encoderDrive(-10);
 
         if(bot.vuMark == RelicRecoveryVuMark.LEFT){
-            bot.encoderTurn(-65);
+            bot.encoderTurn(-60);
             bot.encoderDrive(8);
         } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
             bot.encoderTurn(-30);

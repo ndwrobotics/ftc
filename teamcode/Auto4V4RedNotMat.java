@@ -40,8 +40,8 @@ public class Auto4V4RedNotMat extends LinearOpMode {
 
 
         if(bot.vuMark == RelicRecoveryVuMark.LEFT){
-            bot.encoderDrive(8);
-            bot.encoderTurn(55);
+            bot.encoderDrive(6);
+            bot.encoderTurn(58);
             bot.encoderDrive(24);
         } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
             bot.encoderDrive(11);
@@ -50,26 +50,26 @@ public class Auto4V4RedNotMat extends LinearOpMode {
 
         } else {
             bot.encoderDrive(11);
-            bot.encoderTurn(47);
+            bot.encoderTurn(50);
             bot.encoderDrive(8);
         }
         bot.timeDrive(600, true, r);
         bot.release();
         bot.s(250, r);
-        bot.encoderDrive(-8);
+        bot.encoderDrive(-10);
         bot.autoLowerLift();
         bot.completely_close();
-        bot.encoderDrive(8);
+        bot.encoderDrive(10);
         bot.encoderDrive(-10);
 
         if(bot.vuMark == RelicRecoveryVuMark.LEFT){
             bot.encoderTurn(30);
         } else if (bot.vuMark == RelicRecoveryVuMark.RIGHT){
             bot.encoderTurn(65);
-            bot.encoderDrive(8);
+            bot.encoderDrive(10);
 
         } else {
-            bot.encoderTurn(43);
+            bot.encoderTurn(40);
             bot.encoderDrive(4);
         }
 
